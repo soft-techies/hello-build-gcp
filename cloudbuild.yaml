@@ -1,0 +1,48 @@
+steps:
+  # Install dependencies and run tests
+  - name: "gcr.io/cloud-builders/npm"
+    args: ["install"]
+  
+  - name: "gcr.io/cloud-builders/npm"
+    args: ["test"]
+    env:
+      - "CI=true" # To ensure Jest runs in CI mode if it has specific CI behavior
+
+  # Build the container image
+  - name: "gcr.io/cloud-builders/docker"
+    args:
+      - "build"
+      - "-t"
+      - "gcr.io/$PROJECT_ID/hello-express-service:${_IMAGE_TAG}"
+      - "."
+
+  # Push the container image to Google Container Registry (GCR)
+  - name: "gcr.io/cloud-builders/docker"
+    args:
+      - "push"
+      - "gcr.io/$PROJECT_ID/hello-express-service:${_IMAGE_TAG}"
+
+  # Deploy container image to Cloud Run
+  - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
+    entrypoint: gcloud
+    args:
+      - "run"
+      - "deploy"
+      - "hello-express-service"
+      - "--image"
+      - "gcr.io/$PROJECT_ID/hello-express-service:${_IMAGE_TAG}"
+      - "--region"
+      - "asia-south1"
+      - "--platform"
+      - "managed"
+      - "--allow-unauthenticated"
+
+images:
+  - "gcr.io/$PROJECT_ID/hello-express-service:${_IMAGE_TAG}"
+
+# Define substitutions with default values
+substitutions:
+  _IMAGE_TAG: "latest"  # Default tag, will be overridden by Cloud Build triggers
+
+options:
+  logging: CLOUD_LOGGING_ONLY
