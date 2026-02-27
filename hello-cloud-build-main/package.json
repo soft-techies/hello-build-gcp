@@ -1,0 +1,25 @@
+{
+  "name": "hello-express-gcp",
+  "version": "1.0.0",
+  "description": "Simple Express API for GCP CI/CD demonstration",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "jest"
+  },
+  "keywords": [
+    "express",
+    "gcp",
+    "cloud-run",
+    "cloud-build"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "jest": "^27.0.0",
+    "supertest": "^6.1.6"
+  }
+} 
